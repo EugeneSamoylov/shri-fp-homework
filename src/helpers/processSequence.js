@@ -14,38 +14,65 @@
  * Иногда промисы от API будут приходить в состояние rejected, (прямо как и API в реальной жизни)
  * Ответ будет приходить в поле {result}
  */
- import Api from '../tools/api';
+import Api from "../tools/api";
 
- const api = new Api();
+const api = new Api();
 
- /**
-  * Я – пример, удали меня
-  */
- const wait = time => new Promise(resolve => {
-     setTimeout(resolve, time);
- })
+function isValid(value) {
+  const len = value.length;
+  console.log(+value);
+  const symbs = "0123456789.".split("");
+  let dotsCount = 0;
+  return (
+    value[0] !== "." &&
+    (value[0] !== "0" || value[1] === ".") &&
+    value[len - 1] !== "." &&
+    len < 10 &&
+    len > 2 &&
+    value.split("").every((a) => {
+      if (a === ".") dotsCount++;
+      return symbs.includes(a);
+    }) &&
+    dotsCount < 2 &&
+    +value >= 0.5
+  );
+}
 
- const processSequence = ({value, writeLog, handleSuccess, handleError}) => {
-     /**
-      * Я – пример, удали меня
-      */
-     writeLog(value);
+function roundString(string) {
+  return Math.round(+string);
+}
 
-     api.get('https://api.tech/numbers/base', {from: 2, to: 10, number: '01011010101'}).then(({result}) => {
-         writeLog(result);
-     });
 
-     wait(2500).then(() => {
-         writeLog('SecondLog')
+const processSequence = ({ value, writeLog, handleSuccess, handleError }) => {
+  writeLog(value);
 
-         return wait(1500);
-     }).then(() => {
-         writeLog('ThirdLog');
+  if (!isValid(value)) {
+    handleError("ValidationError");
+    return;
+  }
 
-         return wait(400);
-     }).then(() => {
-         handleSuccess('Done');
-     });
- }
+  const intValue = roundString(value);
+  writeLog(intValue);
+
+  api
+    .get("https://api.tech/numbers/base", {
+      from: 10,
+      to: 2,
+      number: intValue,
+    })
+    .then(({ result }) => {
+      writeLog(result);
+      let num = result.length;
+      writeLog(num);
+      num = num ** 2;
+      writeLog(num);
+      num = num % 3;
+      writeLog(num);
+      return num;
+    })
+    .then(num => api.get(`https://animals.tech/${num}`)(num))
+    .then(({ result }) => handleSuccess(result))
+    .catch(({ result }) => handleError(result));
+};
 
 export default processSequence;

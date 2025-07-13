@@ -41,7 +41,7 @@ export const validateFieldN3 = ({star, square, triangle, circle}) => {
 };
 
 // 4. Синий круг, красная звезда, оранжевый квадрат треугольник любого цвета
-export const validateFieldN4 = ({star, square, triangle, circle}) => {
+export const validateFieldN4 = ({star, square, circle}) => {
     return circle === "blue" && star === "red" && square === "orange";
 };
 
@@ -58,11 +58,11 @@ export const validateFieldN5 = ({star, square, triangle, circle}) => {
     })
     let counter = 0;
     for(let color in colors){
-        if(colors[color] > counter){
+        if(color !== "white" && colors[color] > counter){
             counter = colors[color];
         }
     }
-    return counter >= 3 ? true : false;
+    return counter >= 3;
 };
 
 // 6. Ровно две зеленые фигуры (одна из зелёных – это треугольник), плюс одна красная. Четвёртая оставшаяся любого доступного цвета, но не нарушающая первые два условия
@@ -78,7 +78,7 @@ export const validateFieldN6 = ({star, square, triangle, circle}) => {
             colors[a] = 1;
         }
     })
-    return colors["green"] >= 2 && colors["red"] === 1 ? true : false;
+    return colors["green"] >= 2 && colors["red"] === 1;
 };
 
 // 7. Все фигуры оранжевые.
@@ -99,7 +99,7 @@ export const validateFieldN9 = ({star, square, triangle, circle}) => {
 };
 
 // 10. Треугольник и квадрат одного цвета (не белого), остальные – любого цвета
-export const validateFieldN10 = ({star, square, triangle, circle}) => {
+export const validateFieldN10 = ({square, triangle}) => {
     return triangle === square;
 };
  
